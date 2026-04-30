@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    @Vite(['resources/css/app.css', 'resources/js/app.js'])
     <meta charset="UTF-8">
     <title>Нарушений.нет</title>
 </head>
@@ -16,7 +17,23 @@
 
     <main>
         <a href="{{ route('reports.create') }}">создать заявление</a><br><br>
-            
+        <div>
+            <span>Сортировка по дате создания: </span>
+            <a href="{{ route('report.index', ['sort' => 'desc', 'status' => $status]) }}">сначала новые</a>
+            <a href="{{ route('report.index', ['sort' => 'asc', 'status' => $status]) }}">сначала старые</a>
+        </div>
+         <div>
+            <p>Фильтрация по статусу заявки</p>
+            <ul>
+                @foreach($statuses as $status)
+                     <li>
+                        <a href="{{ route('report.index', ['sort' => $sort, 'status' => $status->id])}}">
+                            {{$status->name}}
+                        </a>
+                     </li>
+                @endforeach
+            </ul>
+         </div>
         <div> 
             @foreach($reports as $report)
                 <div> 
@@ -32,9 +49,10 @@
 
                 <h3>{{ $report->number }}</h3>
                 <p>{{ $report->description }}</p>
-                
+                <p>{{ $report->created_at }}</p>
+                <p>{{ $report->status->name }}</p>
             @endforeach
-
+            {{ $reports->appends(request()->query())->links() }}
         </div> 
     </main>
 
