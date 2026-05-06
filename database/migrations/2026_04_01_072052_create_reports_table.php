@@ -15,17 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('number');
             $table->text('description');
-            $table->timestamps();
             $table->foreignId('user_id')
-                ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
-                ->nullOnDelete();
+                ->cascadeOnDelete();
             $table->foreignId('status_id')
-                ->nullable()
+                ->default(1)
                 ->constrained()
                 ->cascadeOnUpdate()
-                ->nullOnDelete();
+                ->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 

@@ -5,70 +5,95 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-public function index(Request $request)
-{
-    $sort = $request->input('sort');
-    if($sort != 'asc' && $sort != 'desc'){
-        $sort = 'desc';
+    public function index(Request $request)
+    {
+        $sort = $request->input('sort');
+        if ($sort != 'asc' && $sort != 'desc') {
+            $sort = 'desc';
+        }
+
+        $status = $request->input('status');
+        
+        $validate = $request->validate([
+            'status' => "nullable|exists:statuses,id"
+        ]);
+
+        if ($status && $validate) {
+            $reports = Report::where('status_id', $status)
+                ->where('user_id', Auth::user()->id) 
+                ->orderBy('created_at', $sort)
+                ->paginate(8); 
+        } else {
+            $reports = Report::where('user_id', Auth::user()->id) 
+                ->orderBy('created_at', $sort)
+                ->paginate(8); 
+        }
+
+        $statuses = Status::all();
+
+        return view('report.index', compact('reports', 'statuses', 'sort', 'status'));
     }
 
-    $status = $request->input('status');
-    $validate = $request->validate([
-        'status' => "exists:statuses,id"
-    ]);
-    if($validate){
-        $reports = Report::where('status_id', $status)
-                 ->OrderBy('created_at', $sort)
-                 ->paginate(3);
-    } else {
-        $reports = Report::orderBy('created_at', $sort)
-                 ->paginate(3);
+    public function create()
+    {
+        return view('report.create');
     }
 
-    $statuses = Status::all();
+    public function destroy(Report $report)
+    {
+        if (Auth::user()->id !== $report->user_id) {
+            abort(403);
+        }
 
-    return view('report.index', compact('reports', 'statuses', 'sort', 'status'));
-}
+        $report->delete();
+        return redirect()->back();
+    }
 
-public function create(){
-    return view('report.create');
-}
-public function destroy(Report $report)
-{
-    $report->delete();
-    return redirect()->back();
-}
-public function store(Request $request)
-{
-    $data = $request->validate([
-        'number' => 'string',
-        'description' => 'string',
-    ]);
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'number' => 'required|string',
+            'description' => 'required|string',
+        ]);
 
-    \App\Models\Report::create($data);
+        $data['user_id'] = Auth::user()->id;
+        $data['status_id'] = 1;
 
-    return redirect()->back();
-}
+        Report::create($data);
 
-public function show(Report $report)
-{
-    return view('report.show', compact('report'));
-}
+        return redirect()->route('report.index');
+    }
 
-public function edit(Report $report){
-    return view('report.edit', compact('report'));
-}
-public function update(Request $request, Report $report) 
-{
-    $data = $request->validate([
-        'number' => 'string',
-        'description' => 'string',
-    ]);
+    public function show(Report $report)
+    {
+        return view('report.show', compact('report'));
+    }
 
-    $report->update($data);
-    return redirect()->back();
-}
+    public function edit(Report $report)
+    {
+        if (Auth::user()->id === $report->user_id) {
+            return view('report.edit', compact('report'));
+        } else {
+            abort(403, 'У вас нет прав на редактирование этой записи'); 
+        }
+    }
+
+    public function update(Request $request, Report $report) 
+    {
+        if (Auth::user()->id !== $report->user_id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'number' => 'nullable|string',
+            'description' => 'nullable|string',
+        ]);
+
+        $report->update($data);
+        return redirect()->route('report.index');
+    }
 }

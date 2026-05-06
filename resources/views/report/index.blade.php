@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    @Vite(['resources/css/app.css', 'resources/js/app.js'])
-    <meta charset="UTF-8">
-    <title>Нарушений.нет</title>
-</head>
-<body>
-    <header>
-        <div>
-            <h1>НАРУШЕНИЙ.НЕТ</h1>
-        </div>
-        <div>
-            <p>{{ auth()->user()->fio ?? 'ФИО пользователя' }}</p>
-        </div>
-    </header>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            НАРУШЕНИЙ.НЕТ
+        </h2>
+    </x-slot>
 
     <main>
         <a href="{{ route('reports.create') }}">создать заявление</a><br><br>
@@ -51,10 +41,9 @@
                 <p>{{ $report->description }}</p>
                 <p>{{ $report->created_at }}</p>
                 <p>{{ $report->status->name }}</p>
+                </div> 
             @endforeach
             {{ $reports->appends(request()->query())->links() }}
         </div> 
     </main>
-
-</body>
-</html>
+</x-app-layout>
