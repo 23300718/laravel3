@@ -10,7 +10,7 @@ console.log(selectElements);
 
 for (let elem of selectElements) {
     elem.addEventListener('change', function () {
-        this.form.submit(); // Отправляет форму, которой принадлежит select
+        this.form.submit(); 
     });
 }
 

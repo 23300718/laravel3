@@ -1,29 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            НАРУШЕНИЙ.НЕТ
-        </h2>
+        
     </x-slot>
 
     <main>
         <a href="{{ route('reports.create') }}">создать заявление</a><br><br>
-        <div>
-            <span>Сортировка по дате создания: </span>
-            <a href="{{ route('report.index', ['sort' => 'desc', 'status' => $status]) }}">сначала новые</a>
-            <a href="{{ route('report.index', ['sort' => 'asc', 'status' => $status]) }}">сначала старые</a>
-        </div>
-         <div>
-            <p>Фильтрация по статусу заявки</p>
-            <ul>
-                @foreach($statuses as $status)
-                     <li>
-                        <a href="{{ route('report.index', ['sort' => $sort, 'status' => $status->id])}}">
-                            {{$status->name}}
-                        </a>
-                     </li>
-                @endforeach
-            </ul>
-         </div>
+
+        <x-filter :sort="$sort" :status="$status"></x-filter>
+
         <div> 
             @foreach($reports as $report)
                 <div> 
@@ -37,10 +21,13 @@
                         </form>
                     </div>
 
-                <h3>{{ $report->number }}</h3>
-                <p>{{ $report->description }}</p>
-                <p>{{ $report->created_at }}</p>
-                <p>{{ $report->status->name }}</p>
+                    <h3>{{ $report->number }}</h3>
+                    <p>{{ $report->description }}</p>
+                    <p>{{ $report->created_at }}</p>
+                    
+                    <x-status :type="$report->status->id">
+                        {{ $report->status->name }}
+                    </x-status>
                 </div> 
             @endforeach
             {{ $reports->appends(request()->query())->links() }}

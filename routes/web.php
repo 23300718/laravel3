@@ -36,7 +36,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
     Route::get('/reports/{report}/edit', [ReportController::class, 'edit'])->name('reports.edit');
     Route::put('/reports/{report}', [ReportController::class, 'update'])->name('reports.update');
-});
+    Route::get('/index', function () {
+        return view('index');
+    });
+    Route::get('/second', function () {
+        return view('second');
+    });
+
+    });
 
 Route::middleware((Admin::class))->group(function(){
     Route::get('/admin', [AdminController::class,'index'])->name('admin.index');
