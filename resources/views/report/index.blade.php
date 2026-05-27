@@ -11,7 +11,7 @@
         <div> 
             @foreach($reports as $report)
                 <div> 
-                    <span>{{ $report->created_at->format('d.m.Y') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($report->created_at)->translatedFormat('j F Y H:i') }}</span>
                     <div>
                         <a href="{{ route('reports.edit', $report->id) }}">Редактировать</a>
                         <form action="{{ route('reports.destroy', $report->id) }}" method="POST" style="display:inline;">
@@ -23,7 +23,8 @@
 
                     <h3>{{ $report->number }}</h3>
                     <p>{{ $report->description }}</p>
-                    <p>{{ $report->created_at }}</p>
+                    
+                    <p>{{ \Carbon\Carbon::parse($report->created_at)->translatedFormat('j F Y H:i') }}</p>
                     
                     <x-status :type="$report->status->id">
                         {{ $report->status->name }}

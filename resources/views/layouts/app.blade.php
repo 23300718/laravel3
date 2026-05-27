@@ -29,6 +29,8 @@
 
             <!-- Page Content -->
             <main>
+                @include('layouts.flash-messages')
+
                 {{ $slot }}
             </main>
         </div>

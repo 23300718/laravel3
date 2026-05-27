@@ -50,10 +50,11 @@ class ReportController extends Controller
         }
 
         $report->delete();
-        return redirect()->back();
+        
+        return redirect()->route('report.index')->with('success', 'Заявление успешно удалено');
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
         $data = $request->validate([
             'number' => 'required|string',
@@ -65,7 +66,7 @@ class ReportController extends Controller
 
         Report::create($data);
 
-        return redirect()->route('report.index');
+        return redirect()->route('report.index')->with('success', 'Заявление успешно создано!');
     }
 
     public function show(Report $report)
@@ -94,7 +95,8 @@ class ReportController extends Controller
         ]);
 
         $report->update($data);
-        return redirect()->route('report.index');
+        
+        return redirect()->route('report.index')->with('success', 'Заявление успешно обновлено');
     }
 
     public function statusUpdate(Request $request, Report $report)
@@ -108,6 +110,7 @@ class ReportController extends Controller
         ]);
 
         $report->update($request->only(['status_id']));
-        return redirect()->back();
+        
+        return redirect()->back()->with('success', 'Статус заявления успешно изменен');
     }
 }
