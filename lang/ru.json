@@ -870,7 +870,7 @@
     "Zimbabwe": "Зимбабве",
     "Zip / Postal Code": "Почтовый индекс",
     "Åland Islands": "Аландские острова",
-    "login": "Логин",
+    "Login": "Логин",
     "middlename": "Отчество",
     "lastname": "Фамилия",
     "Lastname": "Фамилия",
@@ -879,6 +879,7 @@
     "Log in": "Войти",
     "Register": "Регистрация",
     "Middlename": "Отчество",
-    "These credentials do not match our records.": "Эти данные не соответствуют записям."
+    "These credentials do not match our records.": "Эти данные не соответствуют записям.",
+    "Registration": "Регистрация"
 
 }

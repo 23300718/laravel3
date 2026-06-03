@@ -1,58 +1,61 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h1 class="text-2xl font-semibold mb-6">Административная панель</h1>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h1 class="text-2xl font-bold mb-6">Административная панель</h1>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ФИО</th>
-                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Текст заявления</th>
-                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Номер автомобиля</th>
-                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($reports as $report)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $report->user->lastname ?? '' }} {{ $report->user->name ?? '' }} {{ $report->user->middlename ?? '' }}
-                                </td>
-                                
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ $report->description }}
-                                </td>
-                                
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $report->number }}
-                                </td>
-                                
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    @if($report->status_id === 1)
-                                        <div>
+                    <div style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
+                        <table class="bg-white border border-gray-200" style="min-width: 800px; width: 100%;">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="px-4 py-2 border">ФИО</th>
+                                    <th class="px-4 py-2 border">Текст заявления</th>
+                                    <th class="px-4 py-2 border">Номер автомобиля</th>
+                                    <th class="px-4 py-2 border">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($reports as $report)
+                                <tr>
+                                    <td class="px-4 py-2 border">
+                                        {{ $report->user->lastname ?? '' }}
+                                        {{ $report->user->name ?? '' }}
+                                        {{ $report->user->middlename ?? '' }}
+                                    </td>
+                                    <td class="px-4 py-2 border">{{ Str::limit($report->description, 100) }}</td>
+                                    <td class="px-4 py-2 border">{{ $report->number }}</td>
+                                    <td class="px-4 py-2 border">
+                                        @if($report->status_id == 1)
                                             <form class="status-form" action="{{ route('reports.status.update', $report->id) }}" method="POST">
-                                                @method('patch')
+                                                @method('PATCH')
                                                 @csrf
-                                                <select name="status_id" id="status_id" class="rounded border-gray-300 text-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                                <select name="status_id" id="status_id-{{ $report->id }}" onchange="this.closest('form').submit()">
                                                     @foreach($statuses as $status)
-                                                        <option value="{{ $status->id }}" {{ $status->id === $report->status_id ? 'selected' : '' }}>
-                                                            {{ $status->name }}
-                                                        </option>
+                                                        @if(in_array($status->id, [1, 2, 3]))
+                                                            <option value="{{ $status->id }}" @selected($report->status_id == $status->id)>
+                                                                {{ $status->name }}
+                                                            </option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                             </form>
-                                        </div>
-                                    @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            {{ $report->status->name ?? 'Изменено' }}
-                                        </span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        @else
+                                            <span>
+                                                {{ $report->status->name ?? '' }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4">
+                        {{ $reports->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

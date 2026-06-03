@@ -24,6 +24,10 @@
                     <h3>{{ $report->number }}</h3>
                     <p>{{ $report->description }}</p>
                     
+                    @isset($report->path_img)
+                        <img src="{{ Storage::url($report->path_img) }}" class="contact-block__img" alt="">
+                    @endisset
+                    
                     <p>{{ \Carbon\Carbon::parse($report->created_at)->translatedFormat('j F Y H:i') }}</p>
                     
                     <x-status :type="$report->status->id">
